@@ -5,14 +5,14 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.WakerBehaviour;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import utils.CapacityCalculatorListener;
-import utils.EvaluateChildrenBehavior;
+import utils.*;
 import utils.enums.AgentClass;
 import utils.enums.ConversationId;
+import utils.enums.InformType;
 import utils.enums.ServiceType;
-import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +20,27 @@ import jade.wrapper.AgentController;
 
 public class ReverseProxy extends Agent {
     private List<AID> loadBalancers = new ArrayList<>();
+    private AID webSocket;
 
     @Override
     protected void setup() {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.REVERSE_PROXY, "proxy-service"));
         System.out.printf("[%s] ReverseProxy pornit%n", getLocalName());
+
+        addBehaviour(new ServiceFinder(
+                this,
+                ServiceType.WEBSOCKET_SERVER.toString(),
+                (DFAgentDescription[] results) -> {
+                    AID webSocketAID = results[0].getName();
+                    webSocket = webSocketAID;
+
+                    addBehaviour(new InformWebSocketServer(
+                            this,
+                            InformType.CREATE,
+                            ServiceType.REVERSE_PROXY,
+                            webSocketAID));
+                }
+        ));
 
         // asculta pentru calcul capacitate
         addBehaviour(new CapacityCalculatorListener(this,loadBalancers));

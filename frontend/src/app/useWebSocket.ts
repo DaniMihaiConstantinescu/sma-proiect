@@ -13,8 +13,8 @@ type MessagePayload = {
 
 export default function useWebSocketHook() {
   const [reverseProxies, setReverseProxies] = useState<InfrastructureItem[]>([
-    { id: "rp-1", childrenIds: ["lb-1", "lb-2"], capacity: 100 },
-    { id: "rp-2", childrenIds: ["lb-3"], capacity: 80 },
+    // { id: "rp-1", childrenIds: ["lb-1", "lb-2"], capacity: 100 },
+    // { id: "rp-2", childrenIds: ["lb-3"], capacity: 80 },
   ]);
 
   const [loadBalancers, setLoadBalancers] = useState<InfrastructureItem[]>([
@@ -42,8 +42,6 @@ export default function useWebSocketHook() {
     };
 
     ws.current.onmessage = (event) => {
-      console.log(event);
-
       try {
         const message: MessagePayload = JSON.parse(event.data);
 
