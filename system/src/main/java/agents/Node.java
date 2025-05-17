@@ -76,6 +76,7 @@ public class Node extends Agent {
                 if (msg != null) {
                     String resource = msg.getContent();
                     System.out.printf("[%s] Am primit request pentru %s%n", getLocalName(), resource);
+                    addBehaviour(new ComputeRequest(myAgent, 1000));
                 } else {
                     block();
                 }

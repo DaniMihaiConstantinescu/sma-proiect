@@ -83,7 +83,9 @@ export default function InfrastructureDiagramDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Show Infrastructure Diagram</Button>
+        <Button variant="outline" className="mb-2">
+          Show Infrastructure Diagram
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-[85%] !max-w-none">
         <DialogHeader>
