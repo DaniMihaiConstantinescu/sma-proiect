@@ -4,6 +4,8 @@ import jade.core.Agent;
 import org.java_websocket.server.WebSocketServer;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.WebSocket;
+import utils.Utils;
+import utils.enums.ServiceType;
 
 import java.net.InetSocketAddress;
 
@@ -17,6 +19,7 @@ public class ManagerAgent extends Agent {
 
         socketServer = new MyWebSocketServer(new InetSocketAddress("localhost", 8887));
         socketServer.start();
+        addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.WEBSOCKET_SERVER, "websocket-server-service"));
 
         System.out.printf("[%s] WebSocket server started on ws://localhost:8887 %n", getLocalName());
 

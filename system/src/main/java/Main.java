@@ -24,8 +24,10 @@ public class Main {
             AgentController snif = mc.createNewAgent("snif", "jade.tools.sniffer.Sniffer", null);
             snif.start();
 
-            mc.createNewAgent("Gateway", AgentClass.GATEWAY.getClassName(), null).start();
             mc.createNewAgent("Manager", AgentClass.MANAGER.getClassName(), null).start();
+            Thread.sleep(2000);
+
+            mc.createNewAgent("Gateway", AgentClass.GATEWAY.getClassName(), null).start();
 
             int configProxyNumbers = 2;
             for (int i = 1; i <= configProxyNumbers; i++) {
@@ -39,6 +41,8 @@ public class Main {
 
         } catch (StaleProxyException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }
