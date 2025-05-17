@@ -24,9 +24,13 @@ public class Main {
             AgentController snif = mc.createNewAgent("snif", "jade.tools.sniffer.Sniffer", null);
             snif.start();
 
+            int configProxyNumbers = 2;
+
             mc.createNewAgent("Gateway", AgentClass.GATEWAY.getClassName(), null).start();
-            mc.createNewAgent("ReverseProxy1", AgentClass.REVERSE_PROXY.getClassName(), null).start();
-            mc.createNewAgent("ReverseProxy2", AgentClass.REVERSE_PROXY.getClassName(), null).start();
+
+            for (int i = 1; i <= configProxyNumbers; i++) {
+                mc.createNewAgent("ReverseProxy" + i, AgentClass.REVERSE_PROXY.getClassName(), null).start();
+            }
 
 
             mc.createNewAgent("Client1", AgentClass.CLIENT.getClassName(), null).start();
