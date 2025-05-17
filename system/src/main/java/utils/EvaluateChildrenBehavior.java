@@ -63,8 +63,11 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
 
                 String newName = agentClass.getClassName().substring(agentClass.getClassName().lastIndexOf('.') + 1)
                         + "-" + UUID.randomUUID();
-                AgentController ac = myAgent.getContainerController()
-                        .createNewAgent(newName, agentClass.getClassName(), null);
+                AgentController ac = myAgent.getContainerController().createNewAgent(
+                    newName,
+                    agentClass.getClassName(),
+                     new Object[]{myAgent.getLocalName()}
+                );
                 ac.start();
                 AID newAID = new AID(newName, AID.ISLOCALNAME);
                 children.add(newAID);
@@ -73,7 +76,7 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
                         agentClass, newName);
 
 
-                myAgent.addBehaviour(new WakerBehaviour(myAgent, delayMs) {
+                myAgent.addBehaviour(new WakerBehaviour(myAgent, 1000) {
                     @Override
                     protected void onWake() {
                         ACLMessage notify = new ACLMessage(ACLMessage.INFORM);

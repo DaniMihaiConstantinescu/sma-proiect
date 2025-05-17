@@ -37,8 +37,19 @@ public class Main {
             int clientsNumbers = 10;
             for (int i = 0; i < clientsNumbers; i++) {
                 mc.createNewAgent("Client" + i, AgentClass.CLIENT.getClassName(), null).start();
-
             }
+
+//            Thread.sleep(3000);
+//
+//            for (int i = 0; i < clientsNumbers; i++) {
+//                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), null).start();
+//            }
+//
+//            Thread.sleep(3000);
+//
+//            for (int i = 0; i < clientsNumbers; i++) {
+//                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), null).start();
+//            }
 
         } catch (StaleProxyException e) {
             e.printStackTrace();

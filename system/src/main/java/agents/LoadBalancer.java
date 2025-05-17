@@ -15,17 +15,24 @@ import utils.enums.InformType;
 import utils.enums.ServiceType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import jade.wrapper.AgentController;
 
 public class LoadBalancer extends Agent {
     private List<AID> nodes = new ArrayList<>();
     private AID webSocket;
+    private String parentId;
 
     @Override
     protected void setup() {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.LOAD_BALANCER, "load-balancer-service"));
         System.out.printf("[%s] LoadBalancer pornit%n", getLocalName());
+
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            parentId = (String) args[0];
+        }
 
         // conectare catre manager + update de creare
         addBehaviour(new ServiceFinder(
@@ -39,7 +46,9 @@ public class LoadBalancer extends Agent {
                             this,
                             InformType.CREATE,
                             ServiceType.LOAD_BALANCER,
-                            webSocketAID));
+                            webSocketAID,
+                            parentId
+                            ));
                 }
         ));
 
@@ -106,7 +115,11 @@ public class LoadBalancer extends Agent {
         public void action() {
             try {
                 String nodeName = "node-" + java.util.UUID.randomUUID();
-                AgentController nc = getContainerController().createNewAgent(nodeName, AgentClass.NODE.getClassName(), null);
+                AgentController nc = getContainerController().createNewAgent(
+                        nodeName,
+                        AgentClass.NODE.getClassName(),
+                        new Object[]{getLocalName()}
+                );
                 nc.start();
                 nodes.add(new AID(nodeName, AID.ISLOCALNAME));
                 System.out.printf("[%s] Created new Node %s%n", getLocalName(), nodeName);

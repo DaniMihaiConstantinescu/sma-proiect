@@ -18,11 +18,17 @@ public class Node extends Agent {
     private static final long serialVersionUID = 1L;
     private AID webSocket;
     private int currentLoad = 0;
-    private int maxLoad = 3;
+    private int maxLoad = 5;
+    private String parentId;
 
     @Override
     protected void setup() {
         System.out.printf("[%s] Node pornit%n", getLocalName());
+
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            parentId = (String) args[0];
+        }
 
         // conectare catre manager + update de creare
         addBehaviour(new ServiceFinder(
@@ -36,7 +42,9 @@ public class Node extends Agent {
                             this,
                             InformType.CREATE,
                             ServiceType.NODE,
-                            webSocketAID));
+                            webSocketAID,
+                            parentId
+                    ));
                 }
         ));
 

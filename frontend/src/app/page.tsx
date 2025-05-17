@@ -1,14 +1,14 @@
 "use client";
 
-import { Category } from "@/utils/types";
+import type { Category } from "@/utils/types";
 import { useState } from "react";
 import StatCard from "@/components/stat-card";
 import StatsTable from "@/components/stats-table";
 import useWebSocketHook from "./useWebSocket";
+import InfrastructureDiagram from "@/components/infrastructure-diagram";
 
 export default function Home() {
-  const { reverseProxies, loadBalancers, nodes, sendMessage } =
-    useWebSocketHook();
+  const { reverseProxies, loadBalancers, nodes } = useWebSocketHook();
 
   const [selectedCategory, setSelectedCategory] = useState<Category>(null);
 
@@ -39,26 +39,18 @@ export default function Home() {
         />
       </div>
 
+      <InfrastructureDiagram
+        reverseProxies={reverseProxies}
+        loadBalancers={loadBalancers}
+        nodes={nodes}
+      />
+
       <StatsTable
         selectedCategory={selectedCategory}
         reverseProxies={reverseProxies}
         loadBalancers={loadBalancers}
         nodes={nodes}
       />
-
-      <div className="mt-6 text-center">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={() =>
-            sendMessage({
-              type: "ping",
-              timestamp: Date.now(),
-            })
-          }
-        >
-          Send Ping to Server
-        </button>
-      </div>
     </main>
   );
 }

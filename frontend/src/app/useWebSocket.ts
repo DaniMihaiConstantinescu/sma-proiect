@@ -1,10 +1,5 @@
+import { InfrastructureItem } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
-
-type InfrastructureItem = {
-  id: string;
-  childrenIds: string[];
-  capacity: number;
-};
 
 type MessagePayload = {
   type: "newNode" | "newLoadBalancer" | "newReverseProxy";
@@ -25,7 +20,6 @@ export default function useWebSocketHook() {
 
     ws.current.onopen = () => {
       console.log("[WebSocket] Connected");
-      ws.current?.send("Hello from client");
     };
 
     ws.current.onmessage = (event) => {
@@ -35,9 +29,29 @@ export default function useWebSocketHook() {
         switch (message.type) {
           case "newNode":
             setNodes((prev) => [...prev, message.data]);
+            setLoadBalancers((prev) => {
+              return prev.map((item) =>
+                item.id === message.data.parentId
+                  ? {
+                      ...item,
+                      childrenIds: [...item.childrenIds, message.data.id],
+                    }
+                  : item
+              );
+            });
             break;
           case "newLoadBalancer":
             setLoadBalancers((prev) => [...prev, message.data]);
+            setReverseProxies((prev) => {
+              return prev.map((item) =>
+                item.id === message.data.parentId
+                  ? {
+                      ...item,
+                      childrenIds: [...item.childrenIds, message.data.id],
+                    }
+                  : item
+              );
+            });
             break;
           case "newReverseProxy":
             setReverseProxies((prev) => [...prev, message.data]);

@@ -59,33 +59,42 @@ export default function StatsTable({
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>Capacity</TableHead>
-                <TableHead>Connected To</TableHead>
+                {selectedCategory === "nodes" && <TableHead>Load</TableHead>}
+                {selectedCategory !== "nodes" && (
+                  <TableHead>Connected To</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
               {getSelectedData().map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.id}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        {item.capacity}%
-                      </span>
-                      <Progress
-                        value={item.capacity}
-                        max={100}
-                        className={`h-2 ${
-                          item.capacity > 80
-                            ? "bg-red-200"
-                            : item.capacity > 50
-                            ? "bg-amber-200"
-                            : "bg-green-200"
-                        }`}
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>{item.childrenIds.join(", ") || "None"}</TableCell>
+
+                  {selectedCategory === "nodes" && (
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          {item.capacity}%
+                        </span>
+                        <Progress
+                          value={item.capacity}
+                          max={100}
+                          className={`h-2 ${
+                            item.capacity > 80
+                              ? "bg-red-200"
+                              : item.capacity > 50
+                              ? "bg-amber-200"
+                              : "bg-green-200"
+                          }`}
+                        />
+                      </div>
+                    </TableCell>
+                  )}
+                  {selectedCategory !== "nodes" && (
+                    <TableCell>
+                      {item.childrenIds.join(", ") || "None"}
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

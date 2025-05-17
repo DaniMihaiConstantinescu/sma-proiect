@@ -15,6 +15,7 @@ import utils.enums.InformType;
 import utils.enums.ServiceType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import jade.wrapper.AgentController;
 
@@ -104,7 +105,11 @@ public class ReverseProxy extends Agent {
         public void action() {
             try {
                 String lbName = "lb-" + java.util.UUID.randomUUID();
-                AgentController lb = getContainerController().createNewAgent(lbName, AgentClass.LOAD_BALANCER.getClassName(), null);
+                AgentController lb = getContainerController().createNewAgent(
+                        lbName,
+                        AgentClass.LOAD_BALANCER.getClassName(),
+                        new Object[]{getLocalName()}
+                );
                 lb.start();
                 loadBalancers.add(new AID(lbName, AID.ISLOCALNAME));
                 System.out.printf("[%s] Created new LB %s%n", getLocalName(), lbName);

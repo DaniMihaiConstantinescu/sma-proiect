@@ -12,12 +12,21 @@ public class InformWebSocketServer extends OneShotBehaviour {
     private final InformType informType;
     private final ServiceType instanceType;
     private final AID serverAID;
+    private String parentId = "";
 
-    public InformWebSocketServer(Agent agent, InformType informType, ServiceType instanceType, AID serverAID) {
+    public InformWebSocketServer(Agent a, InformType informType, ServiceType instanceType, AID serverAID) {
+        super(a);
+        this.informType = informType;
+        this.instanceType = instanceType;
+        this.serverAID = serverAID;
+    }
+
+    public InformWebSocketServer(Agent agent, InformType informType, ServiceType instanceType, AID serverAID, String parentId) {
         super(agent);
         this.informType = informType;
         this.instanceType = instanceType;
         this.serverAID = serverAID;
+        this.parentId = parentId;
     }
 
     @Override
@@ -26,9 +35,10 @@ public class InformWebSocketServer extends OneShotBehaviour {
         if (type == null) return;
 
         String content = String.format(
-                "{\"type\": \"%s\", \"data\": { \"id\": \"%s\", \"childrenIds\": [], \"capacity\": 0 }}",
+                "{\"type\": \"%s\", \"data\": { \"id\": \"%s\", \"childrenIds\": [], \"capacity\": 0, \"parentId\": \"%s\" }}",
                 type,
-                myAgent.getLocalName()
+                myAgent.getLocalName(),
+                parentId
         );
 
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
