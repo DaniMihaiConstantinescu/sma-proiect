@@ -20,7 +20,7 @@ public class LoadBalancer extends Agent {
     @Override
     protected void setup() {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.LOAD_BALANCER, "load-balancer-service"));
-        System.out.printf("[%s] LoadBalancer pornit", getLocalName());
+        System.out.printf("[%s] LoadBalancer pornit%n", getLocalName());
 
         // asculta pentru calcul capacitate
         addBehaviour(new CyclicBehaviour(this) {
