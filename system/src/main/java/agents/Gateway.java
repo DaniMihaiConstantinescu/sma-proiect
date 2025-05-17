@@ -9,7 +9,8 @@ import jade.lang.acl.MessageTemplate;
 import java.util.Date;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import utils.ServiceFinder;
-import utils.ServiceType;
+import utils.enums.ConversationId;
+import utils.enums.ServiceType;
 import utils.Utils;
 import java.util.Arrays;
 
@@ -89,7 +90,7 @@ public class Gateway extends Agent {
                     if (bestProxy != null) {
                         ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
                         notify.addReceiver(bestProxy);
-                        notify.setConversationId("proxy-selection");
+                        notify.setConversationId(ConversationId.PROXY_SELECTION.getClassName());
                         notify.setContent(resource);
                         send(notify);
                         System.out.printf("[%s] Notified %s of selection%n", getLocalName(), bestProxy.getLocalName());
@@ -104,6 +105,6 @@ public class Gateway extends Agent {
     @Override
     protected void takeDown() {
         Utils.deregisterService(this);
-        System.out.printf("[%s] Gateway stopped%n", getLocalName());
+        System.out.printf("[%s] Gateway oprit%n", getLocalName());
     }
 }

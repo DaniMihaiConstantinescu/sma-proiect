@@ -8,7 +8,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import utils.Resource;
 import utils.ServiceFinder;
-import utils.ServiceType;
+import utils.enums.ServiceType;
 import utils.Utils;
 
 public class Client extends Agent {

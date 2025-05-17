@@ -3,6 +3,7 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
+import utils.enums.AgentClass;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,7 +17,6 @@ public class Main {
         pC1.setParameter(Profile.MAIN_PORT, "1099");
         pC1.setParameter(Profile.LOCAL_HOST, "localhost");
         pC1.setParameter(Profile.LOCAL_PORT, "1099");
-        AgentContainer c1 = rt.createAgentContainer(pC1);
 
         try {
             AgentController rma = mc.createNewAgent("rma", "jade.tools.rma.rma", null);
@@ -24,14 +24,14 @@ public class Main {
             AgentController snif = mc.createNewAgent("snif", "jade.tools.sniffer.Sniffer", null);
             snif.start();
 
-            mc.createNewAgent("Gateway","agents.Gateway",   null).start();
-            mc.createNewAgent("ReverseProxy1","agents.ReverseProxy",   null).start();
-            mc.createNewAgent("ReverseProxy2","agents.ReverseProxy",   null).start();
+            mc.createNewAgent("Gateway", AgentClass.GATEWAY.getClassName(), null).start();
+            mc.createNewAgent("ReverseProxy1", AgentClass.REVERSE_PROXY.getClassName(), null).start();
+            mc.createNewAgent("ReverseProxy2", AgentClass.REVERSE_PROXY.getClassName(), null).start();
 
 
-            mc.createNewAgent("Client1","agents.Client",   null).start();
-            mc.createNewAgent("Client2","agents.Client",   null).start();
-            mc.createNewAgent("Client3","agents.Client",   null).start();
+            mc.createNewAgent("Client1", AgentClass.CLIENT.getClassName(), null).start();
+            mc.createNewAgent("Client2", AgentClass.CLIENT.getClassName(), null).start();
+            mc.createNewAgent("Client3", AgentClass.CLIENT.getClassName(), null).start();
 
 
         } catch (StaleProxyException e) {
