@@ -80,6 +80,7 @@ public class ReverseProxy extends Agent {
             if (loadBalancers.isEmpty()) {
                 addBehaviour(new CreateLBBehaviour(resource));
             } else {
+                System.out.println("================ are lbs ================");
                 addBehaviour(new EvaluateChildrenBehavior(
                         myAgent,
                         loadBalancers,

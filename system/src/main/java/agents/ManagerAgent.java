@@ -34,7 +34,7 @@ public class ManagerAgent extends Agent {
                 ACLMessage msg = myAgent.receive();
                 if (msg != null) {
                     if (ConversationId.INFRASTRUCTURE_UPDATE.getClassName().equals(msg.getConversationId())) {
-                        System.out.printf("[%s] Received update message: %s%n", getLocalName(), msg.getContent());
+//                        System.out.printf("[%s] Received update message: %s%n", getLocalName(), msg.getContent());
 
                         // Broadcast to all WebSocket clients
                         if (socketServer != null) {

@@ -43,7 +43,9 @@ public class Node extends Agent {
             public void action() {
                 ACLMessage cfp = receive(cfpMt);
                 if (cfp != null) {
-                    int randomCap = 1 + (int) (Math.random() * 100);
+//                    int randomCap = 1 + (int) (Math.random() * 100);
+                    int randomCap = 0;
+
                     ACLMessage reply = cfp.createReply();
                     reply.setPerformative(ACLMessage.PROPOSE);
                     reply.setContent(String.valueOf(randomCap));

@@ -38,7 +38,6 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
     @Override
     public void action() {
         try {
-
             ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
             children.forEach(cfp::addReceiver);
             cfp.setContent(resource);
@@ -89,10 +88,12 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
                 });
 
             } else {
+
                 // alege agentul cu maxCap
                 ACLMessage best = replies.stream()
                         .max(Comparator.comparingInt(a -> Integer.parseInt(a.getContent())))
                         .orElse(null);
+
                 if (best != null) {
                     AID chosen = best.getSender();
                     System.out.printf("[%s] Chosen %s %s with cap=%s%n",

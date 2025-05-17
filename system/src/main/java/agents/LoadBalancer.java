@@ -78,9 +78,11 @@ public class LoadBalancer extends Agent {
 
         @Override
         public void action() {
+            System.out.println(myAgent.getLocalName() + " ================ nodes: ================"  + nodes.toString());
             if (nodes.isEmpty()) {
                 addBehaviour(new CreateNodeBehaviour(resource));
             } else {
+//                System.out.println("================ are nodes ================");
                 addBehaviour(new EvaluateChildrenBehavior(
                         myAgent,
                         nodes,
