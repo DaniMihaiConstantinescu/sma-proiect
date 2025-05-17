@@ -29,7 +29,6 @@ public class Client extends Agent {
 
     @Override
     protected void takeDown() {
-        Utils.deregisterService(this);
         System.out.println("[" + getLocalName() + "] Client oprit");
     }
 
@@ -55,6 +54,8 @@ public class Client extends Agent {
             if (resp != null) {
                 System.out.printf("[Client] Proxy ales: %s%n", resp.getContent());
             }
+
+            myAgent.doDelete();
         }
     }
 }

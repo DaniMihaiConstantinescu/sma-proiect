@@ -12,24 +12,11 @@ type MessagePayload = {
 };
 
 export default function useWebSocketHook() {
-  const [reverseProxies, setReverseProxies] = useState<InfrastructureItem[]>([
-    // { id: "rp-1", childrenIds: ["lb-1", "lb-2"], capacity: 100 },
-    // { id: "rp-2", childrenIds: ["lb-3"], capacity: 80 },
-  ]);
-
-  const [loadBalancers, setLoadBalancers] = useState<InfrastructureItem[]>([
-    { id: "lb-1", childrenIds: ["node-1", "node-2"], capacity: 50 },
-    { id: "lb-2", childrenIds: ["node-3"], capacity: 30 },
-    { id: "lb-3", childrenIds: ["node-4", "node-5"], capacity: 60 },
-  ]);
-
-  const [nodes, setNodes] = useState<InfrastructureItem[]>([
-    { id: "node-1", childrenIds: [], capacity: 20 },
-    { id: "node-2", childrenIds: [], capacity: 25 },
-    { id: "node-3", childrenIds: [], capacity: 10 },
-    { id: "node-4", childrenIds: [], capacity: 15 },
-    { id: "node-5", childrenIds: [], capacity: 18 },
-  ]);
+  const [reverseProxies, setReverseProxies] = useState<InfrastructureItem[]>(
+    []
+  );
+  const [loadBalancers, setLoadBalancers] = useState<InfrastructureItem[]>([]);
+  const [nodes, setNodes] = useState<InfrastructureItem[]>([]);
 
   const ws = useRef<WebSocket | null>(null);
 

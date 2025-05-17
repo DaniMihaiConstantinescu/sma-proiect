@@ -27,6 +27,7 @@ public class ReverseProxy extends Agent {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.REVERSE_PROXY, "proxy-service"));
         System.out.printf("[%s] ReverseProxy pornit%n", getLocalName());
 
+        // conectare catre manager + update de creare
         addBehaviour(new ServiceFinder(
                 this,
                 ServiceType.WEBSOCKET_SERVER.toString(),

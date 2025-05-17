@@ -34,10 +34,11 @@ public class Main {
                 mc.createNewAgent("ReverseProxy" + i, AgentClass.REVERSE_PROXY.getClassName(), null).start();
             }
 
-            mc.createNewAgent("Client1", AgentClass.CLIENT.getClassName(), null).start();
-            mc.createNewAgent("Client2", AgentClass.CLIENT.getClassName(), null).start();
-            mc.createNewAgent("Client3", AgentClass.CLIENT.getClassName(), null).start();
+            int clientsNumbers = 10;
+            for (int i = 0; i < clientsNumbers; i++) {
+                mc.createNewAgent("Client" + i, AgentClass.CLIENT.getClassName(), null).start();
 
+            }
 
         } catch (StaleProxyException e) {
             e.printStackTrace();
