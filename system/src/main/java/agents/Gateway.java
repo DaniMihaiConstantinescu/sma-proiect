@@ -11,7 +11,6 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import utils.ServiceFinder;
 import utils.ServiceType;
 import utils.Utils;
-
 import java.util.Arrays;
 
 public class Gateway extends Agent {
@@ -19,8 +18,9 @@ public class Gateway extends Agent {
     @Override
     protected void setup() {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.GATEWAY, "gateway-service"));
+        System.out.printf("[%s] Gateway pornit %n", getLocalName());
 
-        // Behavior care asculta dupa mesaje de la client
+        // asculta dupa request-uri de la client
         addBehaviour(new CyclicBehaviour(this) {
             private final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 
@@ -29,15 +29,13 @@ public class Gateway extends Agent {
                 ACLMessage req = receive(mt);
                 if (req != null) {
                     String resource = req.getContent();
-                    System.out.printf("[%s] REQUEST pentru %s de la %s%n",
-                            getLocalName(), resource, req.getSender().getLocalName());
+                    AID client = req.getSender();
+                    System.out.printf("[%s] REQUEST for %s from %s%n", getLocalName(), resource, client.getLocalName());
 
                     addBehaviour(new ServiceFinder(
                             myAgent,
                             ServiceType.REVERSE_PROXY.toString(),
-                            (DFAgentDescription[] proxies) -> {
-                                sendCFPAndRespond(req.getSender(), resource, proxies);
-                            }
+                            (DFAgentDescription[] proxies) -> sendCFPAndRespond(client, resource, proxies)
                     ));
                 } else {
                     block();
@@ -51,17 +49,18 @@ public class Gateway extends Agent {
             @Override
             public void action() {
                 try {
+                    // Send CFP to proxies
                     ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
                     Arrays.stream(proxies).forEach(dfd -> cfp.addReceiver(dfd.getName()));
                     cfp.setContent(resource);
-                    cfp.setReplyByDate(new Date(System.currentTimeMillis() + 5000));
+                    cfp.setReplyByDate(new Date(System.currentTimeMillis()+5000));
                     send(cfp);
 
                     AID bestProxy = null;
                     int bestCap = 101;
-                    int repliesCnt = 0;
+                    int replies = 0;
 
-                    while (repliesCnt < proxies.length) {
+                    while (replies < proxies.length) {
                         ACLMessage reply = blockingReceive(
                                 MessageTemplate.or(
                                         MessageTemplate.MatchPerformative(ACLMessage.PROPOSE),
@@ -69,28 +68,32 @@ public class Gateway extends Agent {
                                 ),
                                 10000
                         );
-                        if (reply != null && reply.getPerformative() == ACLMessage.PROPOSE) {
+                        if (reply != null && reply.getPerformative()==ACLMessage.PROPOSE) {
                             int cap = Integer.parseInt(reply.getContent());
-                            System.out.printf("[%s] Proxy %s a propus cap=%d%n",
-                                    getLocalName(), reply.getSender().getLocalName(), cap);
+                            System.out.printf("[%s] Proxy %s proposed cap=%d%n", getLocalName(), reply.getSender().getLocalName(), cap);
                             if (cap < bestCap) {
                                 bestCap = cap;
                                 bestProxy = reply.getSender();
                             }
                         }
-                        repliesCnt++;
+                        replies++;
                     }
 
-                    ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
-                    inform.addReceiver(client);
+                    // Inform client
+                    ACLMessage informClient = new ACLMessage(ACLMessage.INFORM);
+                    informClient.addReceiver(client);
+                    informClient.setContent(bestProxy!=null?bestProxy.getLocalName():"no-proxy-available");
+                    send(informClient);
+
+                    // Notify proxy of selection
                     if (bestProxy != null) {
-                        inform.setContent(bestProxy.getLocalName());
-                        System.out.printf("[%s] Aleg %s cu cap=%d%n",
-                                getLocalName(), bestProxy.getLocalName(), bestCap);
-                    } else {
-                        inform.setContent("no-proxy-available");
+                        ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
+                        notify.addReceiver(bestProxy);
+                        notify.setConversationId("proxy-selection");
+                        notify.setContent(resource);
+                        send(notify);
+                        System.out.printf("[%s] Notified %s of selection%n", getLocalName(), bestProxy.getLocalName());
                     }
-                    send(inform);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,6 +104,6 @@ public class Gateway extends Agent {
     @Override
     protected void takeDown() {
         Utils.deregisterService(this);
-        System.out.println("[" + getLocalName() + "] Gateway oprit");
+        System.out.printf("[%s] Gateway stopped%n", getLocalName());
     }
 }

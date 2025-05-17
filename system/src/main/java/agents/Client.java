@@ -19,8 +19,8 @@ public class Client extends Agent {
                 ServiceType.GATEWAY.toString(),
                 (DFAgentDescription[] results) -> {
                     AID gatewayAID = results[0].getName();
-                    System.out.printf("[Client] Trimit REQUEST pentru resursa 'user' catre %s%n",
-                            gatewayAID.getLocalName());
+                    System.out.printf("[%s] Trimit REQUEST pentru resursa 'user' catre %s%n",
+                           this.getLocalName(), gatewayAID.getLocalName());
 
                     addBehaviour(new SendRequestBehaviour(this, gatewayAID, Resource.USER));
                 }

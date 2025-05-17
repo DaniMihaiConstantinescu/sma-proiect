@@ -29,7 +29,9 @@ public class Main {
             mc.createNewAgent("ReverseProxy2","agents.ReverseProxy",   null).start();
 
 
-            mc.createNewAgent("Client","agents.Client",   null).start();
+            mc.createNewAgent("Client1","agents.Client",   null).start();
+            mc.createNewAgent("Client2","agents.Client",   null).start();
+            mc.createNewAgent("Client3","agents.Client",   null).start();
 
 
         } catch (StaleProxyException e) {

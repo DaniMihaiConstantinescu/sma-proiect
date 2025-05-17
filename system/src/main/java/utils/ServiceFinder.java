@@ -77,7 +77,7 @@ public class ServiceFinder extends OneShotBehaviour {
                 try {
                     DFAgentDescription[] dfds = DFService.decodeNotification(msg.getContent());
                     if (dfds.length > 0) {
-                        System.out.println(myAgent.getLocalName() + ": Serviciu apărut prin notificare.");
+                        System.out.println(myAgent.getLocalName() + ": Serviciu aparut prin notificare.");
                         onFound.accept(dfds);
                         myAgent.removeBehaviour(this);
                     }
