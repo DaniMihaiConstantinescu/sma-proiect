@@ -34,7 +34,7 @@ export default function useWebSocketHook() {
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8080");
+    ws.current = new WebSocket("ws://localhost:8887");
 
     ws.current.onopen = () => {
       console.log("[WebSocket] Connected");
@@ -42,6 +42,8 @@ export default function useWebSocketHook() {
     };
 
     ws.current.onmessage = (event) => {
+      console.log(event);
+
       try {
         const message: MessagePayload = JSON.parse(event.data);
 

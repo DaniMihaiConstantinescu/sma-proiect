@@ -1,3 +1,5 @@
+"use client";
+
 import { Category } from "@/utils/types";
 import { useState } from "react";
 import StatCard from "@/components/stat-card";

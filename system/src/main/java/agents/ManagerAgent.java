@@ -15,7 +15,6 @@ public class ManagerAgent extends Agent {
     protected void setup() {
         System.out.printf("[%s] Manager pornit %n", getLocalName());
 
-
         socketServer = new MyWebSocketServer(new InetSocketAddress("localhost", 8887));
         socketServer.start();
 
@@ -53,9 +52,7 @@ public class ManagerAgent extends Agent {
 
         @Override
         public void onMessage(WebSocket conn, String message) {
-            System.out.println("Received message: " + message);
-            // Echo back
-            conn.send("Received: " + message);
+            System.out.println("[WebSockets] Received message: " + message);
         }
 
         @Override
