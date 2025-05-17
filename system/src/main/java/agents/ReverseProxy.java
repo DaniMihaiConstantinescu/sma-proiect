@@ -21,7 +21,7 @@ public class ReverseProxy extends Agent {
     @Override
     protected void setup() {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.REVERSE_PROXY, "proxy-service"));
-        System.out.printf("[%s] ReverseProxy started with %d LB(s)%n", getLocalName(), loadBalancers.size());
+        System.out.printf("[%s] ReverseProxy pornit%n", getLocalName());
 
         // asculta pentru calcul capacitate
         addBehaviour(new CyclicBehaviour(this) {
@@ -58,7 +58,6 @@ public class ReverseProxy extends Agent {
         System.out.printf("[%s] ReverseProxy oprit%n", getLocalName());
     }
 
-    // Behaviour separat pentru calcul capacitate
     private class CalculateCapacityBehaviour extends OneShotBehaviour {
         private final AID gateway;
         private final String resource;
@@ -143,7 +142,7 @@ public class ReverseProxy extends Agent {
                     protected void onWake() {
                         ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
                         notify.addReceiver(new AID(lbName, AID.ISLOCALNAME));
-                        notify.setConversationId("lb-assignment");
+                        notify.setConversationId("node-assignment");
                         notify.setContent(resource);
                         send(notify);
                         System.out.printf("[%s] Notified new LB %s for resource %s%n", getLocalName(), lbName, resource);
@@ -192,7 +191,7 @@ public class ReverseProxy extends Agent {
 
                         ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
                         notify.addReceiver(new AID(chosen, AID.ISLOCALNAME));
-                        notify.setConversationId("lb-assignment");
+                        notify.setConversationId("node-assignment");
                         notify.setContent(resource);
                         send(notify);
                         System.out.printf("[%s] Notified LB %s for resource %s%n", getLocalName(), chosen, resource);
