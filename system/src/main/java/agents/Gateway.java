@@ -20,6 +20,7 @@ public class Gateway extends Agent {
     protected void setup() {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.GATEWAY, "gateway-service"));
 
+        // Behavior care asculta dupa mesaje de la client
         addBehaviour(new CyclicBehaviour(this) {
             private final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 
@@ -57,7 +58,7 @@ public class Gateway extends Agent {
                     send(cfp);
 
                     AID bestProxy = null;
-                    int bestCap = -1;
+                    int bestCap = 101;
                     int repliesCnt = 0;
 
                     while (repliesCnt < proxies.length) {
@@ -72,7 +73,7 @@ public class Gateway extends Agent {
                             int cap = Integer.parseInt(reply.getContent());
                             System.out.printf("[%s] Proxy %s a propus cap=%d%n",
                                     getLocalName(), reply.getSender().getLocalName(), cap);
-                            if (cap > bestCap) {
+                            if (cap < bestCap) {
                                 bestCap = cap;
                                 bestProxy = reply.getSender();
                             }
