@@ -3,6 +3,8 @@ package agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -15,6 +17,8 @@ import utils.enums.ServiceType;
 public class Node extends Agent {
     private static final long serialVersionUID = 1L;
     private AID webSocket;
+    private int currentLoad = 0;
+    private int maxLoad = 3;
 
     @Override
     protected void setup() {
@@ -43,14 +47,13 @@ public class Node extends Agent {
             public void action() {
                 ACLMessage cfp = receive(cfpMt);
                 if (cfp != null) {
-//                    int randomCap = 1 + (int) (Math.random() * 100);
-                    int randomCap = 0;
+                    int capacity = (int) ( ((double)(maxLoad - currentLoad) / maxLoad) * 100 );
 
                     ACLMessage reply = cfp.createReply();
                     reply.setPerformative(ACLMessage.PROPOSE);
-                    reply.setContent(String.valueOf(randomCap));
+                    reply.setContent(String.valueOf(capacity));
                     send(reply);
-                    System.out.printf("[%s] Am PROPUS capacitate random=%d către %s%n", getLocalName(), randomCap, cfp.getSender().getLocalName());
+                    System.out.printf("[%s] Am PROPUS capacitate random=%d catre %s%n", getLocalName(), capacity, cfp.getSender().getLocalName());
                 } else {
                     block();
                 }
@@ -70,6 +73,20 @@ public class Node extends Agent {
                 }
             }
         });
+    }
+
+    private class ComputeRequest extends WakerBehaviour {
+
+        public ComputeRequest(Agent a, long timeout) {
+            super(a, timeout);
+            currentLoad++;
+        }
+
+        @Override
+        protected void onWake() {
+            super.onWake();
+            currentLoad--;
+        }
     }
 
     @Override
