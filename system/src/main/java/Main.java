@@ -24,7 +24,11 @@ public class Main {
             AgentController snif = mc.createNewAgent("snif", "jade.tools.sniffer.Sniffer", null);
             snif.start();
 
-            mc.createNewAgent("LoadBalancer","agents.LoadBalancer",   null).start();
+            mc.createNewAgent("Gateway","agents.Gateway",   null).start();
+            mc.createNewAgent("ReverseProxy1","agents.ReverseProxy",   null).start();
+            mc.createNewAgent("ReverseProxy2","agents.ReverseProxy",   null).start();
+
+            mc.createNewAgent("Client","agents.Client",   null).start();
 
 
         } catch (StaleProxyException e) {
