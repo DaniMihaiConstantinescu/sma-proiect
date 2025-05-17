@@ -80,7 +80,6 @@ public class ReverseProxy extends Agent {
             if (loadBalancers.isEmpty()) {
                 addBehaviour(new CreateLBBehaviour(resource));
             } else {
-                System.out.println("================ are lbs ================");
                 addBehaviour(new EvaluateChildrenBehavior(
                         myAgent,
                         loadBalancers,
@@ -88,7 +87,7 @@ public class ReverseProxy extends Agent {
                         90,
                         5000,
                         AgentClass.LOAD_BALANCER,
-                        ConversationId.LB_ASSIGNMENT
+                        ConversationId.NODE_ASSIGNMENT
                 ));
             }
         }
@@ -109,6 +108,7 @@ public class ReverseProxy extends Agent {
                 lb.start();
                 loadBalancers.add(new AID(lbName, AID.ISLOCALNAME));
                 System.out.printf("[%s] Created new LB %s%n", getLocalName(), lbName);
+
                 // dupa 1s, trimite notificare pt lb ca a fost selectat + resursa
                 addBehaviour(new WakerBehaviour(myAgent, 1000) {
                     @Override

@@ -88,7 +88,6 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
                 });
 
             } else {
-
                 // alege agentul cu maxCap
                 ACLMessage best = replies.stream()
                         .max(Comparator.comparingInt(a -> Integer.parseInt(a.getContent())))
