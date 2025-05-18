@@ -30,7 +30,7 @@ public class InformWebSocketServer extends OneShotBehaviour {
         this.parentId = parentId;
     }
 
-    public InformWebSocketServer(Agent a, String description, AID serverAID, ServiceType instanceType, InformType informType) {
+    public InformWebSocketServer(Agent a, String description, InformType informType, ServiceType instanceType, AID serverAID) {
         super(a);
         this.description = description;
         this.serverAID = serverAID;
