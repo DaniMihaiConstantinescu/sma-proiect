@@ -25,10 +25,6 @@ export default function InfrastructureDiagramDialog({
   const [treeData, setTreeData] = useState<Data | null>(null);
 
   useEffect(() => {
-    console.log(treeData);
-  }, [treeData]);
-
-  useEffect(() => {
     if (
       reverseProxies.length === 0 &&
       loadBalancers.length === 0 &&
