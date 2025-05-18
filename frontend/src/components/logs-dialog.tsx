@@ -12,6 +12,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -76,32 +77,27 @@ export function LogsDialog({ logs }: LogsDialogProps) {
         </div>
 
         <div className="overflow-y-auto max-h-[calc(80vh-160px)]">
-          {filteredLogs.length !== 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[180px]">Time</TableHead>
-                  <TableHead className="w-[150px]">Instance</TableHead>
-                  <TableHead>Description</TableHead>
+          <Table>
+            {filteredLogs.length === 0 && <TableCaption>No logs</TableCaption>}
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[180px]">Time</TableHead>
+                <TableHead className="w-[150px]">Instance</TableHead>
+                <TableHead>Description</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredLogs.map((log, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-mono text-xs">
+                    {log.timestamp}
+                  </TableCell>
+                  <TableCell className="font-mono">{log.instance}</TableCell>
+                  <TableCell>{log.description}</TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLogs.map((log, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-mono text-xs">
-                      {log.timestamp}
-                    </TableCell>
-                    <TableCell className="font-mono">{log.instance}</TableCell>
-                    <TableCell>{log.description}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="text-center py-10 text-muted-foreground">
-              <p className="text-lg">No logs</p>
-            </div>
-          )}
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </DialogContent>
     </Dialog>
