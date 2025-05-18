@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { InfrastructureItem } from "@/utils/types";
@@ -24,6 +23,10 @@ export default function InfrastructureDiagramDialog({
   nodes,
 }: InfrastructureDiagramProps) {
   const [treeData, setTreeData] = useState<Data | null>(null);
+
+  useEffect(() => {
+    console.log(treeData);
+  }, [treeData]);
 
   useEffect(() => {
     if (
@@ -83,9 +86,7 @@ export default function InfrastructureDiagramDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="mb-2">
-          Show Infrastructure Diagram
-        </Button>
+        <Button variant="outline">Show Infrastructure Diagram</Button>
       </DialogTrigger>
       <DialogContent className="w-[85%] !max-w-none">
         <DialogHeader>
@@ -109,9 +110,6 @@ export default function InfrastructureDiagramDialog({
             </div>
           )}
         </div>
-        <DialogFooter>
-          <Button variant="outline">Close</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

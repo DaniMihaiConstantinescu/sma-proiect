@@ -1,9 +1,9 @@
-import { InfrastructureItem } from "@/utils/types";
+import { InfrastructureItem, Log } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
 
 type MessagePayload = {
-  type: "newNode" | "newLoadBalancer" | "newReverseProxy";
-  data: InfrastructureItem;
+  type: "newNode" | "newLoadBalancer" | "newReverseProxy" | "log";
+  data: InfrastructureItem | Log;
 };
 
 export default function useWebSocketHook() {
@@ -12,6 +12,8 @@ export default function useWebSocketHook() {
   );
   const [loadBalancers, setLoadBalancers] = useState<InfrastructureItem[]>([]);
   const [nodes, setNodes] = useState<InfrastructureItem[]>([]);
+
+  const [logs, setLogs] = useState<Log[]>([]);
 
   const ws = useRef<WebSocket | null>(null);
 
@@ -28,34 +30,43 @@ export default function useWebSocketHook() {
 
         switch (message.type) {
           case "newNode":
-            setNodes((prev) => [...prev, message.data]);
+            const newNode = message.data as InfrastructureItem;
+
+            setNodes((prev) => [...prev, newNode]);
             setLoadBalancers((prev) => {
               return prev.map((item) =>
-                item.id === message.data.parentId
+                item.id === newNode.parentId
                   ? {
                       ...item,
-                      childrenIds: [...item.childrenIds, message.data.id],
+                      childrenIds: [...item.childrenIds, newNode.id],
                     }
                   : item
               );
             });
             break;
           case "newLoadBalancer":
-            setLoadBalancers((prev) => [...prev, message.data]);
+            const newLB = message.data as InfrastructureItem;
+
+            setLoadBalancers((prev) => [...prev, newLB]);
             setReverseProxies((prev) => {
               return prev.map((item) =>
-                item.id === message.data.parentId
+                item.id === newLB.parentId
                   ? {
                       ...item,
-                      childrenIds: [...item.childrenIds, message.data.id],
+                      childrenIds: [...item.childrenIds, newLB.id],
                     }
                   : item
               );
             });
             break;
           case "newReverseProxy":
-            setReverseProxies((prev) => [...prev, message.data]);
+            const newProxy = message.data as InfrastructureItem;
+            setReverseProxies((prev) => [...prev, newProxy]);
             break;
+
+          case "log":
+            const newLog = message.data as Log;
+            setLogs((prev) => [...prev, newLog]);
           default:
             console.warn("Unknown message type:", message.type);
         }
@@ -81,5 +92,6 @@ export default function useWebSocketHook() {
     loadBalancers,
     nodes,
     sendMessage,
+    logs,
   };
 }

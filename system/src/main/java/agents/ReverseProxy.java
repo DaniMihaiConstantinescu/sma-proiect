@@ -15,7 +15,6 @@ import utils.enums.InformType;
 import utils.enums.ServiceType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import jade.wrapper.AgentController;
 

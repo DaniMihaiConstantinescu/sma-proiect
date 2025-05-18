@@ -13,6 +13,7 @@ public class InformWebSocketServer extends OneShotBehaviour {
     private final ServiceType instanceType;
     private final AID serverAID;
     private String parentId = "";
+    private String description = "";
 
     public InformWebSocketServer(Agent a, InformType informType, ServiceType instanceType, AID serverAID) {
         super(a);
@@ -29,17 +30,41 @@ public class InformWebSocketServer extends OneShotBehaviour {
         this.parentId = parentId;
     }
 
+    public InformWebSocketServer(Agent a, String description, AID serverAID, ServiceType instanceType, InformType informType) {
+        super(a);
+        this.description = description;
+        this.serverAID = serverAID;
+        this.instanceType = instanceType;
+        this.informType = informType;
+    }
+
     @Override
     public void action() {
-        String type = mapToPayloadType(informType, instanceType);
-        if (type == null) return;
 
-        String content = String.format(
-                "{\"type\": \"%s\", \"data\": { \"id\": \"%s\", \"childrenIds\": [], \"capacity\": 0, \"parentId\": \"%s\" }}",
-                type,
-                myAgent.getLocalName(),
-                parentId
-        );
+        String content;
+        if (informType == InformType.LOG) {
+
+            String timestamp = java.time.Instant.now().toString();
+            String instance = myAgent.getLocalName();
+
+            content = String.format(
+                    "{\"type\": \"log\", \"data\": { \"timestamp\": \"%s\", \"instance\": \"%s\", \"description\": \"%s\" }}",
+                    timestamp,
+                    instance,
+                    description
+            );
+
+        } else {
+            String type = mapToPayloadType(informType, instanceType);
+            if (type == null) return;
+
+            content = String.format(
+                    "{\"type\": \"%s\", \"data\": { \"id\": \"%s\", \"childrenIds\": [], \"capacity\": 0, \"parentId\": \"%s\" }}",
+                    type,
+                    myAgent.getLocalName(),
+                    parentId
+            );
+        }
 
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         msg.addReceiver(serverAID);
