@@ -48,10 +48,11 @@ public class InformWebSocketServer extends OneShotBehaviour {
             String instance = myAgent.getLocalName();
 
             content = String.format(
-                    "{\"type\": \"log\", \"data\": { \"timestamp\": \"%s\", \"instance\": \"%s\", \"description\": \"%s\" }}",
+                    "{\"type\": \"log\", \"data\": { \"timestamp\": \"%s\", \"instance\": \"%s\", \"description\": \"%s\", \"instanceType\": \"%s\" }}",
                     timestamp,
                     instance,
-                    description
+                    description,
+                    instanceType
             );
 
         } else {

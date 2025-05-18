@@ -8,18 +8,38 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import java.util.Date;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import utils.InformWebSocketServer;
 import utils.ServiceFinder;
 import utils.enums.ConversationId;
+import utils.enums.InformType;
 import utils.enums.ServiceType;
 import utils.Utils;
 import java.util.Arrays;
 
 public class Gateway extends Agent {
+    private AID webSocket;
 
     @Override
     protected void setup() {
         addBehaviour(new Utils.RegisterServiceBehaviour(this, ServiceType.GATEWAY, "gateway-service"));
         System.out.printf("[%s] Gateway pornit %n", getLocalName());
+
+        // conectare catre manager + update de creare
+        addBehaviour(new ServiceFinder(
+                this,
+                ServiceType.WEBSOCKET_SERVER.toString(),
+                (DFAgentDescription[] results) -> {
+                    webSocket = results[0].getName();
+
+                    addBehaviour(new InformWebSocketServer(
+                            this,
+                            "API Gateway created",
+                            InformType.LOG,
+                            ServiceType.GATEWAY,
+                            webSocket
+                    ));
+                }
+        ));
 
         // asculta dupa request-uri de la client
         addBehaviour(new CyclicBehaviour(this) {
@@ -32,6 +52,15 @@ public class Gateway extends Agent {
                     String resource = req.getContent();
                     AID client = req.getSender();
                     System.out.printf("[%s] REQUEST for %s from %s%n", getLocalName(), resource, client.getLocalName());
+
+                    String description = String.format("REQUEST for resource %s from %s", resource, client.getLocalName());
+                    addBehaviour(new InformWebSocketServer(
+                            myAgent,
+                            description,
+                            InformType.LOG,
+                            ServiceType.GATEWAY,
+                            webSocket
+                    ));
 
                     addBehaviour(new ServiceFinder(
                             myAgent,

@@ -15,7 +15,6 @@ import utils.enums.InformType;
 import utils.enums.ServiceType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import jade.wrapper.AgentController;
 
@@ -49,6 +48,15 @@ public class LoadBalancer extends Agent {
                             webSocketAID,
                             parentId
                             ));
+
+                    String description = String.format("Load balancer created by %s", parentId);
+                    addBehaviour(new InformWebSocketServer(
+                            this,
+                            description,
+                            InformType.LOG,
+                            ServiceType.LOAD_BALANCER,
+                            webSocket
+                    ));
                 }
         ));
 
@@ -97,7 +105,8 @@ public class LoadBalancer extends Agent {
                         90,
                         5000,
                         AgentClass.NODE,
-                        ConversationId.NODE_ASSIGNMENT
+                        ConversationId.NODE_ASSIGNMENT,
+                        webSocket
                 ));
             }
         }

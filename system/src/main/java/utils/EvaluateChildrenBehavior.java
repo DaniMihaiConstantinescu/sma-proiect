@@ -10,6 +10,8 @@ import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
 import utils.enums.AgentClass;
 import utils.enums.ConversationId;
+import utils.enums.InformType;
+import utils.enums.ServiceType;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -24,8 +26,10 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
     long delayMs;
     AgentClass agentClass;
     ConversationId convId;
+    private AID webSocket;
 
-    public EvaluateChildrenBehavior(Agent a, List<AID> children, String resource, int threshold, long delayMs, AgentClass agentClass, ConversationId convId) {
+
+    public EvaluateChildrenBehavior(Agent a, List<AID> children, String resource, int threshold, long delayMs, AgentClass agentClass, ConversationId convId, AID webSocket) {
         super(a);
         this.children = children;
         this.resource = resource;
@@ -33,6 +37,7 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
         this.delayMs = delayMs;
         this.agentClass = agentClass;
         this.convId = convId;
+        this.webSocket = webSocket;
     }
 
     @Override
@@ -102,6 +107,19 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
                             myAgent.getLocalName(),
                             agentClass, chosen.getLocalName(),
                             best.getContent());
+
+                    String description = String.format("Chosen %s %s with cap=%s",
+                            agentClass, chosen.getLocalName(),
+                            best.getContent());
+
+                    myAgent.addBehaviour(new InformWebSocketServer(
+                            myAgent,
+                            description,
+                            InformType.LOG,
+                            ServiceType.GATEWAY,
+                            webSocket
+                    ));
+
                     ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
                     notify.addReceiver(chosen);
                     notify.setConversationId(convId.getClassName());

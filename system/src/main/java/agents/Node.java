@@ -3,7 +3,6 @@ package agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
@@ -45,6 +44,15 @@ public class Node extends Agent {
                             webSocketAID,
                             parentId
                     ));
+
+                    String description = String.format("Node created by %s", parentId);
+                    addBehaviour(new InformWebSocketServer(
+                            this,
+                            description,
+                            InformType.LOG,
+                            ServiceType.NODE,
+                            webSocket
+                    ));
                 }
         ));
 
@@ -61,7 +69,17 @@ public class Node extends Agent {
                     reply.setPerformative(ACLMessage.PROPOSE);
                     reply.setContent(String.valueOf(capacity));
                     send(reply);
-                    System.out.printf("[%s] Am PROPUS capacitate random=%d catre %s%n", getLocalName(), capacity, cfp.getSender().getLocalName());
+                    System.out.printf("[%s] Am PROPUS capacitate =%d catre %s%n", getLocalName(), capacity, cfp.getSender().getLocalName());
+
+                    String description = String.format("Am PROPUS capacitate =%d catre %s", capacity, cfp.getSender().getLocalName());
+                    addBehaviour(new InformWebSocketServer(
+                            myAgent,
+                            description,
+                            InformType.LOG,
+                            ServiceType.NODE,
+                            webSocket
+                    ));
+
                 } else {
                     block();
                 }
@@ -76,6 +94,15 @@ public class Node extends Agent {
                 if (msg != null) {
                     String resource = msg.getContent();
                     System.out.printf("[%s] Am primit request pentru %s%n", getLocalName(), resource);
+
+                    String description = String.format("Am primit request pentru %s", resource);
+                    addBehaviour(new InformWebSocketServer(
+                            myAgent,
+                            description,
+                            InformType.LOG,
+                            ServiceType.NODE,
+                            webSocket
+                    ));
                     addBehaviour(new ComputeRequest(myAgent, 1000));
                 } else {
                     block();

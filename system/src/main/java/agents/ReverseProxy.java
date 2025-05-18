@@ -40,6 +40,14 @@ public class ReverseProxy extends Agent {
                             InformType.CREATE,
                             ServiceType.REVERSE_PROXY,
                             webSocketAID));
+
+                    addBehaviour(new InformWebSocketServer(
+                            this,
+                            "Reverse proxy created",
+                            InformType.LOG,
+                            ServiceType.LOAD_BALANCER,
+                            webSocket
+                    ));
                 }
         ));
 
@@ -87,7 +95,8 @@ public class ReverseProxy extends Agent {
                         90,
                         5000,
                         AgentClass.LOAD_BALANCER,
-                        ConversationId.NODE_ASSIGNMENT
+                        ConversationId.NODE_ASSIGNMENT,
+                        webSocket
                 ));
             }
         }
