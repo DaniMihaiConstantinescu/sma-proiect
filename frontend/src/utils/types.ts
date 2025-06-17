@@ -3,6 +3,7 @@ export type InfrastructureItem = {
   childrenIds: string[];
   capacity: number;
   parentId: string;
+  resourceType?: string;
 };
 
 export type Category = "reverseProxies" | "loadBalancers" | "nodes" | null;

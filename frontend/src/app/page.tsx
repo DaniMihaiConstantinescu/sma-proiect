@@ -12,8 +12,6 @@ export default function Home() {
   const { reverseProxies, loadBalancers, nodes, logs } = useWebSocketHook();
 
   const [selectedCategory, setSelectedCategory] = useState<Category>(null);
-
-  // const sampleLogs = [
   //   {
   //     timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
   //     instance: "server-01",

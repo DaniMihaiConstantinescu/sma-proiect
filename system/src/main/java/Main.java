@@ -34,16 +34,16 @@ public class Main {
                 mc.createNewAgent("ReverseProxy" + i, AgentClass.REVERSE_PROXY.getClassName(), null).start();
             }
 
-            int clientsNumbers = 10;
+            int clientsNumbers = 5;
             for (int i = 0; i < clientsNumbers; i++) {
                 mc.createNewAgent("Client" + i, AgentClass.CLIENT.getClassName(), null).start();
             }
 
-//            Thread.sleep(3000);
-//
-//            for (int i = 0; i < clientsNumbers; i++) {
-//                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), null).start();
-//            }
+            Thread.sleep(3000);
+
+            for (int i = 0; i < clientsNumbers; i++) {
+                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), null).start();
+            }
 //
 //            Thread.sleep(3000);
 //

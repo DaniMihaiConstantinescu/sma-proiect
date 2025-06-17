@@ -13,12 +13,15 @@ import utils.enums.ConversationId;
 import utils.enums.InformType;
 import utils.enums.ServiceType;
 
+import java.util.Arrays;
+
 public class Node extends Agent {
     private static final long serialVersionUID = 1L;
     private AID webSocket;
     private int currentLoad = 0;
     private int maxLoad = 5;
     private String parentId;
+    private String resourceType;
 
     @Override
     protected void setup() {
@@ -27,6 +30,7 @@ public class Node extends Agent {
         Object[] args = getArguments();
         if (args != null && args.length > 0) {
             parentId = (String) args[0];
+            resourceType = (String) args[1];
         }
 
         // conectare catre manager + update de creare
@@ -42,7 +46,8 @@ public class Node extends Agent {
                             InformType.CREATE,
                             ServiceType.NODE,
                             webSocketAID,
-                            parentId
+                            parentId,
+                            resourceType
                     ));
 
                     String description = String.format("Node created by %s", parentId);

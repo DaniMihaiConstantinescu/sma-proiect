@@ -14,6 +14,7 @@ public class InformWebSocketServer extends OneShotBehaviour {
     private final AID serverAID;
     private String parentId = "";
     private String description = "";
+    private String resourceType = null;
 
     public InformWebSocketServer(Agent a, InformType informType, ServiceType instanceType, AID serverAID) {
         super(a);
@@ -38,12 +39,20 @@ public class InformWebSocketServer extends OneShotBehaviour {
         this.informType = informType;
     }
 
+    public InformWebSocketServer(Agent agent, InformType informType, ServiceType instanceType, AID serverAID, String parentId, String resourceType) {
+        super(agent);
+        this.informType = informType;
+        this.instanceType = instanceType;
+        this.serverAID = serverAID;
+        this.parentId = parentId;
+        this.resourceType = resourceType;
+    }
+
     @Override
     public void action() {
-
         String content;
-        if (informType == InformType.LOG) {
 
+        if (informType == InformType.LOG) {
             String timestamp = java.time.Instant.now().toString();
             String instance = myAgent.getLocalName();
 
@@ -54,17 +63,24 @@ public class InformWebSocketServer extends OneShotBehaviour {
                     description,
                     instanceType
             );
-
         } else {
             String type = mapToPayloadType(informType, instanceType);
             if (type == null) return;
 
-            content = String.format(
-                    "{\"type\": \"%s\", \"data\": { \"id\": \"%s\", \"childrenIds\": [], \"capacity\": 0, \"parentId\": \"%s\" }}",
+            String basePayload = String.format(
+                    "{\"type\": \"%s\", \"data\": { \"id\": \"%s\", \"childrenIds\": [], \"capacity\": 0, \"parentId\": \"%s\"",
                     type,
                     myAgent.getLocalName(),
                     parentId
             );
+
+            if (instanceType == ServiceType.NODE && resourceType != null) {
+                basePayload += String.format(", \"resourceType\": \"%s\"", resourceType);
+            }
+
+            basePayload += "}";
+
+            content = basePayload + "}";
         }
 
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);

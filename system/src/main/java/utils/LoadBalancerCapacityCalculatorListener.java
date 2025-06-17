@@ -10,11 +10,11 @@ import java.util.Date;
 import java.util.List;
 
 
-public class CapacityCalculatorListener extends CyclicBehaviour {
+public class LoadBalancerCapacityCalculatorListener extends CyclicBehaviour {
     private final MessageTemplate cfpMt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
     private final List<AID> children;
 
-    public CapacityCalculatorListener(Agent a, List<AID> children) {
+    public LoadBalancerCapacityCalculatorListener(Agent a, List<AID> children) {
         super(a);
         this.children = children;
     }

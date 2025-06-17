@@ -66,12 +66,17 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
 
             if (children.isEmpty() || maxCap > threshold) {
 
-                String newName = agentClass.getClassName().substring(agentClass.getClassName().lastIndexOf('.') + 1)
+                String newName = "";
+                if (agentClass.getClassName().substring(agentClass.getClassName().lastIndexOf('.') + 1) == "Node"){
+                    newName += resource + "-";
+                }
+
+                newName +=  agentClass.getClassName().substring(agentClass.getClassName().lastIndexOf('.') + 1)
                         + "-" + UUID.randomUUID();
                 AgentController ac = myAgent.getContainerController().createNewAgent(
                     newName,
                     agentClass.getClassName(),
-                     new Object[]{myAgent.getLocalName()}
+                     new Object[]{myAgent.getLocalName(), resource}
                 );
                 ac.start();
                 AID newAID = new AID(newName, AID.ISLOCALNAME);
@@ -80,7 +85,7 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
                         myAgent.getLocalName(),
                         agentClass, newName);
 
-
+                final String finalName = newName;
                 myAgent.addBehaviour(new WakerBehaviour(myAgent, 1000) {
                     @Override
                     protected void onWake() {
@@ -91,7 +96,7 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
                         myAgent.send(notify);
                         System.out.printf("[%s] Notified new %s %s for resource %s%n",
                                 myAgent.getLocalName(),
-                                agentClass, newName, resource);
+                                agentClass, finalName, resource);
                     }
                 });
 

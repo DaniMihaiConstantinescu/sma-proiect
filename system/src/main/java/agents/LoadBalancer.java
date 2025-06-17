@@ -15,11 +15,13 @@ import utils.enums.InformType;
 import utils.enums.ServiceType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import jade.wrapper.AgentController;
 
 public class LoadBalancer extends Agent {
-    private List<AID> nodes = new ArrayList<>();
+    private Map<String, List<AID>> nodesMap = new HashMap<>();
     private AID webSocket;
     private String parentId;
 
@@ -33,22 +35,23 @@ public class LoadBalancer extends Agent {
             parentId = (String) args[0];
         }
 
-        // conectare catre manager + update de creare
+        // Connect to manager and send creation update
         addBehaviour(new ServiceFinder(
                 this,
                 ServiceType.WEBSOCKET_SERVER.toString(),
                 (DFAgentDescription[] results) -> {
-                    AID webSocketAID = results[0].getName();
-                    webSocket = webSocketAID;
+                    webSocket = results[0].getName();
 
+                    // Inform creation
                     addBehaviour(new InformWebSocketServer(
                             this,
                             InformType.CREATE,
                             ServiceType.LOAD_BALANCER,
-                            webSocketAID,
+                            webSocket,
                             parentId
-                            ));
+                    ));
 
+                    // Log
                     String description = String.format("Load balancer created by %s", parentId);
                     addBehaviour(new InformWebSocketServer(
                             this,
@@ -60,12 +63,14 @@ public class LoadBalancer extends Agent {
                 }
         ));
 
-        // asculta pentru calcul capacitate
-        addBehaviour(new CapacityCalculatorListener(this,nodes));
+        // Listen for capacity requests
+        addBehaviour(new NodeCapacityCalculatorListener(this, nodesMap));
 
-        // asculta notificare de selectie nod
+        // Listen for node assignment notifications
         addBehaviour(new CyclicBehaviour(this) {
-            private final MessageTemplate selMt = MessageTemplate.MatchConversationId(ConversationId.NODE_ASSIGNMENT.getClassName());
+            private final MessageTemplate selMt = MessageTemplate.MatchConversationId(
+                    ConversationId.NODE_ASSIGNMENT.getClassName());
+
             @Override
             public void action() {
                 ACLMessage msg = receive(selMt);
@@ -82,7 +87,7 @@ public class LoadBalancer extends Agent {
     @Override
     protected void takeDown() {
         Utils.deregisterService(this);
-        System.out.printf("[%s] LoadBalancer oprit%n", getLocalName());
+        System.out.printf("[%s] LoadBalancer stopped%n", getLocalName());
     }
 
     private class HandleSelectionBehaviour extends OneShotBehaviour {
@@ -95,6 +100,7 @@ public class LoadBalancer extends Agent {
 
         @Override
         public void action() {
+            List<AID> nodes = nodesMap.computeIfAbsent(resource, k -> new ArrayList<>());
             if (nodes.isEmpty()) {
                 addBehaviour(new CreateNodeBehaviour(resource));
             } else {
@@ -123,22 +129,25 @@ public class LoadBalancer extends Agent {
         @Override
         public void action() {
             try {
-                String nodeName = "node-" + java.util.UUID.randomUUID();
+                String nodeName = resource + "-Node-" + java.util.UUID.randomUUID();
                 AgentController nc = getContainerController().createNewAgent(
                         nodeName,
                         AgentClass.NODE.getClassName(),
-                        new Object[]{getLocalName()}
+                        new Object[]{getLocalName(), resource}
                 );
                 nc.start();
-                nodes.add(new AID(nodeName, AID.ISLOCALNAME));
-                System.out.printf("[%s] Created new Node %s%n", getLocalName(), nodeName);
+                AID newNodeAID = new AID(nodeName, AID.ISLOCALNAME);
 
-                // Notificare după 1s catre nodul creat
+                // Add to map
+                nodesMap.computeIfAbsent(resource, k -> new ArrayList<>()).add(newNodeAID);
+                System.out.printf("[%s] Created new Node %s for resource %s%n", getLocalName(), nodeName, resource);
+
+                // Notify after 1s
                 addBehaviour(new WakerBehaviour(myAgent, 1000) {
                     @Override
                     protected void onWake() {
                         ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
-                        notify.addReceiver(new AID(nodeName, AID.ISLOCALNAME));
+                        notify.addReceiver(newNodeAID);
                         notify.setConversationId(ConversationId.NODE_ASSIGNMENT.getClassName());
                         notify.setContent(resource);
                         send(notify);

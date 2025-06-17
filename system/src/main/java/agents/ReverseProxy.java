@@ -52,7 +52,7 @@ public class ReverseProxy extends Agent {
         ));
 
         // asculta pentru calcul capacitate
-        addBehaviour(new CapacityCalculatorListener(this,loadBalancers));
+        addBehaviour(new LoadBalancerCapacityCalculatorListener(this,loadBalancers));
 
         // ascult notificare selectie proxy
         addBehaviour(new CyclicBehaviour(this) {
