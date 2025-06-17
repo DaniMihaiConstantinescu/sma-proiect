@@ -112,7 +112,7 @@ public class ReverseProxy extends Agent {
         @Override
         public void action() {
             try {
-                String lbName = "lb-" + java.util.UUID.randomUUID();
+                String lbName = "LoadBalancer-" + java.util.UUID.randomUUID();
                 AgentController lb = getContainerController().createNewAgent(
                         lbName,
                         AgentClass.LOAD_BALANCER.getClassName(),

@@ -14,6 +14,21 @@ import utils.Utils;
 public class Client extends Agent {
     @Override
     protected void setup() {
+
+        Resource resourceType;
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            resourceType = (Resource) args[0];
+        } else {
+            resourceType = null;
+        }
+
+        if (resourceType == null) {
+            System.out.printf("[%s] Nu s-a specificat resusra dorita %n", this.getLocalName());
+            doDelete();
+            return;
+        }
+
         addBehaviour(new ServiceFinder(
                 this,
                 ServiceType.GATEWAY.toString(),
@@ -22,7 +37,7 @@ public class Client extends Agent {
                     System.out.printf("[%s] Trimit REQUEST pentru resursa 'user' catre %s%n",
                            this.getLocalName(), gatewayAID.getLocalName());
 
-                    addBehaviour(new SendRequestBehaviour(this, gatewayAID, Resource.USER));
+                    addBehaviour(new SendRequestBehaviour(this, gatewayAID, resourceType));
                 }
         ));
     }

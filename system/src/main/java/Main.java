@@ -3,6 +3,7 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
+import utils.Resource;
 import utils.enums.AgentClass;
 
 public class Main {
@@ -34,17 +35,17 @@ public class Main {
                 mc.createNewAgent("ReverseProxy" + i, AgentClass.REVERSE_PROXY.getClassName(), null).start();
             }
 
-            int clientsNumbers = 5;
+            int clientsNumbers = 3;
             for (int i = 0; i < clientsNumbers; i++) {
-                mc.createNewAgent("Client" + i, AgentClass.CLIENT.getClassName(), null).start();
+                mc.createNewAgent("Client" + i, AgentClass.CLIENT.getClassName(), new Object[]{Resource.USER}).start();
             }
 
             Thread.sleep(3000);
 
             for (int i = 0; i < clientsNumbers; i++) {
-                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), null).start();
+                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), new Object[]{Resource.POST}).start();
             }
-//
+
 //            Thread.sleep(3000);
 //
 //            for (int i = 0; i < clientsNumbers; i++) {
