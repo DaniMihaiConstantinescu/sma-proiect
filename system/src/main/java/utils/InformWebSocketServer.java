@@ -63,24 +63,34 @@ public class InformWebSocketServer extends OneShotBehaviour {
                     description,
                     instanceType
             );
+
+        } else if (informType == InformType.DELETE && instanceType == ServiceType.NODE) {
+
+
+            content = String.format(
+                    "{\"type\": \"deleteNode\", \"data\": { \"id\": \"%s\", \"parentId\": \"%s\", \"resourceType\": \"%s\" }}",
+                    myAgent.getLocalName(),
+                    parentId,
+                    resourceType != null ? resourceType : ""
+            );
+
         } else {
             String type = mapToPayloadType(informType, instanceType);
             if (type == null) return;
 
-            String basePayload = String.format(
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format(
                     "{\"type\": \"%s\", \"data\": { \"id\": \"%s\", \"childrenIds\": [], \"capacity\": 0, \"parentId\": \"%s\"",
                     type,
                     myAgent.getLocalName(),
                     parentId
-            );
+            ));
 
             if (instanceType == ServiceType.NODE && resourceType != null) {
-                basePayload += String.format(", \"resourceType\": \"%s\"", resourceType);
+                sb.append(String.format(", \"resourceType\": \"%s\"", resourceType));
             }
-
-            basePayload += "}";
-
-            content = basePayload + "}";
+            sb.append(" }}");
+            content = sb.toString();
         }
 
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);

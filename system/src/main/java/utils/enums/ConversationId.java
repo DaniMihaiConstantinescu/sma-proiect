@@ -4,7 +4,8 @@ public enum ConversationId {
     PROXY_SELECTION("proxy-selection"),
     NODE_ASSIGNMENT("node-assignment"),
     LB_ASSIGNMENT("lb-assignment"),
-    INFRASTRUCTURE_UPDATE("infrastructure-update");
+    INFRASTRUCTURE_UPDATE("infrastructure-update"),
+    NODE_SHUTDOWN("shutdown");
 
     private final String className;
 

@@ -2,7 +2,12 @@ import { InfrastructureItem, Log } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
 
 type MessagePayload = {
-  type: "newNode" | "newLoadBalancer" | "newReverseProxy" | "log";
+  type:
+    | "newNode"
+    | "newLoadBalancer"
+    | "newReverseProxy"
+    | "deleteNode"
+    | "log";
   data: InfrastructureItem | Log;
 };
 
@@ -29,44 +34,73 @@ export default function useWebSocketHook() {
         const message: MessagePayload = JSON.parse(event.data);
 
         switch (message.type) {
-          case "newNode":
+          case "newNode": {
             const newNode = message.data as InfrastructureItem;
-
+            // add to nodes list
             setNodes((prev) => [...prev, newNode]);
-            setLoadBalancers((prev) => {
-              return prev.map((item) =>
+            // register under parent LB
+            setLoadBalancers((prev) =>
+              prev.map((item) =>
                 item.id === newNode.parentId
                   ? {
                       ...item,
                       childrenIds: [...item.childrenIds, newNode.id],
                     }
                   : item
-              );
-            });
+              )
+            );
             break;
-          case "newLoadBalancer":
-            const newLB = message.data as InfrastructureItem;
+          }
 
+          case "newLoadBalancer": {
+            const newLB = message.data as InfrastructureItem;
             setLoadBalancers((prev) => [...prev, newLB]);
-            setReverseProxies((prev) => {
-              return prev.map((item) =>
+            setReverseProxies((prev) =>
+              prev.map((item) =>
                 item.id === newLB.parentId
                   ? {
                       ...item,
                       childrenIds: [...item.childrenIds, newLB.id],
                     }
                   : item
-              );
-            });
+              )
+            );
             break;
-          case "newReverseProxy":
+          }
+
+          case "newReverseProxy": {
             const newProxy = message.data as InfrastructureItem;
             setReverseProxies((prev) => [...prev, newProxy]);
             break;
+          }
 
-          case "log":
+          case "deleteNode": {
+            const deleted = message.data as InfrastructureItem;
+
+            console.log("deleted: ", deleted);
+
+            setNodes((prev) => prev.filter((n) => n.id !== deleted.id));
+            setLoadBalancers((prev) =>
+              prev.map((lb) =>
+                lb.id === deleted.parentId
+                  ? {
+                      ...lb,
+                      childrenIds: lb.childrenIds.filter(
+                        (id) => id !== deleted.id
+                      ),
+                    }
+                  : lb
+              )
+            );
+            break;
+          }
+
+          case "log": {
             const newLog = message.data as Log;
             setLogs((prev) => [...prev, newLog]);
+            break;
+          }
+
           default:
             console.warn("Unknown message type:", message.type);
         }

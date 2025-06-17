@@ -42,7 +42,6 @@ public class LoadBalancer extends Agent {
                 (DFAgentDescription[] results) -> {
                     webSocket = results[0].getName();
 
-                    // Inform creation
                     addBehaviour(new InformWebSocketServer(
                             this,
                             InformType.CREATE,
@@ -51,7 +50,6 @@ public class LoadBalancer extends Agent {
                             parentId
                     ));
 
-                    // Log
                     String description = String.format("Load balancer created by %s", parentId);
                     addBehaviour(new InformWebSocketServer(
                             this,
@@ -82,6 +80,8 @@ public class LoadBalancer extends Agent {
                 }
             }
         });
+
+        addBehaviour(new NodeCleanupBehaviour(this, nodesMap, webSocket));
     }
 
     @Override

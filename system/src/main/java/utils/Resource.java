@@ -1,5 +1,7 @@
 package utils;
 
 public enum Resource {
-    USER
+    USER,
+    POST,
+    COMMENT
 }
