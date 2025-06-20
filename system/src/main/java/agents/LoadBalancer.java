@@ -81,6 +81,7 @@ public class LoadBalancer extends Agent {
             }
         });
 
+        // Behavior to remove unused nodes every 10s
         addBehaviour(new NodeCleanupBehaviour(this, nodesMap, webSocket));
     }
 

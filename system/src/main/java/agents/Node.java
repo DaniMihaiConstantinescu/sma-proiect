@@ -115,7 +115,7 @@ public class Node extends Agent {
                     addBehaviour(new InformWebSocketServer(
                             myAgent, description,
                             InformType.LOG, ServiceType.NODE, webSocket));
-                    addBehaviour(new ComputeRequest(myAgent, 1000));
+                    addBehaviour(new ComputeRequest(myAgent, 3000));
                 }
             }
         });

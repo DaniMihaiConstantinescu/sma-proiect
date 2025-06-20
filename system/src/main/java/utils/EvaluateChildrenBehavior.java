@@ -64,7 +64,7 @@ public class EvaluateChildrenBehavior extends OneShotBehaviour {
                     })
                     .max().orElse(0);
 
-            if (children.isEmpty() || maxCap > threshold) {
+            if (children.isEmpty() || 100 - maxCap > threshold) {
 
                 String newName = "";
                 if (agentClass.getClassName().substring(agentClass.getClassName().lastIndexOf('.') + 1) == "Node"){
