@@ -35,22 +35,7 @@ public class Main {
                 mc.createNewAgent("ReverseProxy" + i, AgentClass.REVERSE_PROXY.getClassName(), null).start();
             }
 
-            int clientsNumbers = 3;
-            for (int i = 0; i < clientsNumbers; i++) {
-                mc.createNewAgent("Client" + i, AgentClass.CLIENT.getClassName(), new Object[]{Resource.USER}).start();
-            }
-
-            Thread.sleep(3000);
-
-            for (int i = 0; i < clientsNumbers; i++) {
-                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), new Object[]{Resource.POST}).start();
-            }
-
-//            Thread.sleep(3000);
-//
-//            for (int i = 0; i < clientsNumbers; i++) {
-//                mc.createNewAgent("Client" + (i+5), AgentClass.CLIENT.getClassName(), null).start();
-//            }
+            mc.createNewAgent("Client", AgentClass.CLIENT.getClassName(), new Object[]{Resource.USER}).start();
 
         } catch (StaleProxyException e) {
             e.printStackTrace();
