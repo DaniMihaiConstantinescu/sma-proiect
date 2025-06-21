@@ -78,8 +78,6 @@ export default function useWebSocketHook() {
           case "deleteNode": {
             const deleted = message.data as InfrastructureItem;
 
-            console.log("deleted: ", deleted);
-
             setNodes((prev) => prev.filter((n) => n.id !== deleted.id));
             setLoadBalancers((prev) =>
               prev.map((lb) =>
