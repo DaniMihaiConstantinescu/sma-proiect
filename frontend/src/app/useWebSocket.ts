@@ -7,6 +7,7 @@ type MessagePayload = {
     | "newLoadBalancer"
     | "newReverseProxy"
     | "deleteNode"
+    | "capacity_update"
     | "log";
   data: InfrastructureItem | Log;
 };
@@ -90,6 +91,19 @@ export default function useWebSocketHook() {
                       ),
                     }
                   : lb
+              )
+            );
+            break;
+          }
+
+          case "capacity_update": {
+            const updated = message.data as InfrastructureItem;
+
+            setNodes((prev) =>
+              prev.map((item) =>
+                item.id === updated.id
+                  ? { ...item, capacity: 100 - updated.capacity }
+                  : item
               )
             );
             break;

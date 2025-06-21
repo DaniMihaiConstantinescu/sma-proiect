@@ -88,7 +88,7 @@ export default function StatsTable({
                           <Progress
                             value={item.capacity}
                             max={100}
-                            className={`h-2 ${
+                            className={`h-2 min-w-8 ${
                               item.capacity > 80
                                 ? "bg-red-200"
                                 : item.capacity > 50
