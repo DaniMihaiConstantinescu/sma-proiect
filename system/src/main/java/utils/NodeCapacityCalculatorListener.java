@@ -48,7 +48,9 @@ public class NodeCapacityCalculatorListener extends CyclicBehaviour {
         public void action() {
             try {
                 int maxCap = 0;
-                if (!children.isEmpty()) {
+                if (children.isEmpty()) {
+                    maxCap = 101;
+                } else {
                     ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
                     children.forEach(cfp::addReceiver);
                     cfp.setContent(resource);
