@@ -15,6 +15,7 @@ public class InformWebSocketServer extends OneShotBehaviour {
     private String parentId = "";
     private String description = "";
     private String resourceType = null;
+    private Integer currentCapacity = null;
 
     public InformWebSocketServer(Agent a, InformType informType, ServiceType instanceType, AID serverAID) {
         super(a);
@@ -48,11 +49,25 @@ public class InformWebSocketServer extends OneShotBehaviour {
         this.resourceType = resourceType;
     }
 
+    public InformWebSocketServer(Agent a, AID serverAID, int currentCapacity) {
+        super(a);
+        this.serverAID = serverAID;
+        this.currentCapacity = currentCapacity;
+        this.informType = InformType.CAPACITY_UPDATE;
+        this.instanceType = ServiceType.NODE;
+    }
+
     @Override
     public void action() {
         String content;
 
-        if (informType == InformType.LOG) {
+        if (informType == InformType.CAPACITY_UPDATE && currentCapacity != null) {
+            content = String.format(
+                    "{\"type\": \"capacity_update\", \"data\": { \"id\": \"%s\", \"capacity\": %d }}",
+                    myAgent.getLocalName(),
+                    currentCapacity
+            );
+        } else if (informType == InformType.LOG) {
             String timestamp = java.time.Instant.now().toString();
             String instance = myAgent.getLocalName();
 
@@ -65,7 +80,6 @@ public class InformWebSocketServer extends OneShotBehaviour {
             );
 
         } else if (informType == InformType.DELETE && instanceType == ServiceType.NODE) {
-
 
             content = String.format(
                     "{\"type\": \"deleteNode\", \"data\": { \"id\": \"%s\", \"parentId\": \"%s\", \"resourceType\": \"%s\" }}",

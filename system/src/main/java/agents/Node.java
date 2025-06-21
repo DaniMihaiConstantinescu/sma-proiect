@@ -61,9 +61,15 @@ public class Node extends Agent {
 
         addBehaviour(new CyclicBehaviour(this) {
             private final MessageTemplate cfpMt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
-            private final MessageTemplate selMt = MessageTemplate.MatchConversationId(
+            private final MessageTemplate shutdownMt = MessageTemplate.MatchConversationId(
                     ConversationId.NODE_SHUTDOWN.getClassName());
-            private final MessageTemplate mt = MessageTemplate.or(cfpMt, selMt);
+            private final MessageTemplate assignmentMt = MessageTemplate.MatchConversationId(
+                    ConversationId.NODE_ASSIGNMENT.getClassName());
+
+            private final MessageTemplate mt = MessageTemplate.or(
+                    cfpMt,
+                    MessageTemplate.or(shutdownMt, assignmentMt)
+            );
 
             @Override
             public void action() {
@@ -115,7 +121,7 @@ public class Node extends Agent {
                     addBehaviour(new InformWebSocketServer(
                             myAgent, description,
                             InformType.LOG, ServiceType.NODE, webSocket));
-                    addBehaviour(new ComputeRequest(myAgent, 3000));
+                    addBehaviour(new ComputeRequest(myAgent, 1000));
                 }
             }
         });
@@ -125,13 +131,23 @@ public class Node extends Agent {
         public ComputeRequest(Agent a, long timeout) {
             super(a, timeout);
             currentLoad++;
+            sendCapacityUpdate();
         }
 
         @Override
         protected void onWake() {
-            super.onWake();
             currentLoad--;
+            sendCapacityUpdate();
         }
+    }
+
+    private void sendCapacityUpdate() {
+        int cap = (int)(((double)(maxLoad - currentLoad) / maxLoad) * 100);
+        addBehaviour(new InformWebSocketServer(
+                this,
+                webSocket,
+                cap
+        ));
     }
 
     @Override
