@@ -28,8 +28,9 @@ interface InfrastructureDiagramProps {
 // dagre config
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
-const NODE_WIDTH = 150;
-const NODE_HEIGHT = 50;
+const NODE_WIDTH = 200;
+const NODE_HEIGHT = 75;
+const SMALL_NODE_HEIGHT = 50;
 
 type Direction = "TB" | "LR";
 
@@ -93,7 +94,15 @@ export default function InfrastructureDiagramDialog({
       id: "gateway",
       data: { label: "Gateway" },
       position: { x: 0, y: 0 },
-      style: { width: NODE_WIDTH, height: NODE_HEIGHT, fontWeight: "bold" },
+      style: {
+        width: NODE_WIDTH,
+        height: SMALL_NODE_HEIGHT,
+        fontWeight: "bold",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+      },
     });
 
     // Reverse Proxies
@@ -104,8 +113,12 @@ export default function InfrastructureDiagramDialog({
         position: { x: 0, y: 0 },
         style: {
           width: NODE_WIDTH,
-          height: NODE_HEIGHT,
+          height: SMALL_NODE_HEIGHT,
           borderColor: "#1E3A8A",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
         },
       });
       rfEdges.push({
@@ -128,6 +141,10 @@ export default function InfrastructureDiagramDialog({
             width: NODE_WIDTH,
             height: NODE_HEIGHT,
             borderColor: "#B45309",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
           },
         });
         rfEdges.push({
@@ -148,6 +165,10 @@ export default function InfrastructureDiagramDialog({
               width: NODE_WIDTH,
               height: NODE_HEIGHT,
               borderColor: "#047857",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
             },
           });
           rfEdges.push({
