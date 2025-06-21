@@ -26,16 +26,17 @@ interface InfrastructureDiagramProps {
 }
 
 // dagre config
-// dagre.graphlib && dagre.graphlib.Graph;
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 50;
 
+type Direction = "TB" | "LR";
+
 function getLayoutedElements(
   nodes: Node<{ label: string }>[],
   edges: Edge[],
-  direction: "TB" | "LR" = "TB"
+  direction: Direction = "TB"
 ): { nodes: Node<{ label: string }>[]; edges: Edge[] } {
   const isHorizontal = direction === "LR";
   dagreGraph.setGraph({ rankdir: direction });
@@ -43,7 +44,6 @@ function getLayoutedElements(
   nodes.forEach((node) => {
     dagreGraph.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
   });
-
   edges.forEach((edge) => {
     dagreGraph.setEdge(edge.source, edge.target);
   });
@@ -69,6 +69,7 @@ export default function InfrastructureDiagramDialog({
   loadBalancers,
   nodes,
 }: InfrastructureDiagramProps) {
+  const [direction, setDirection] = useState<Direction>("LR");
   const [layout, setLayout] = useState<{
     nodes: Node<{ label: string }>[];
     edges: Edge[];
@@ -161,11 +162,14 @@ export default function InfrastructureDiagramDialog({
 
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       rfNodes,
-      rfEdges
+      rfEdges,
+      direction
     );
 
     setLayout({ nodes: layoutedNodes, edges: layoutedEdges });
-  }, [reverseProxies, loadBalancers, nodes]);
+  }, [reverseProxies, loadBalancers, nodes, direction]);
+
+  const toggleDirection = () => setDirection((d) => (d === "TB" ? "LR" : "TB"));
 
   return (
     <Dialog>
@@ -173,8 +177,11 @@ export default function InfrastructureDiagramDialog({
         <Button variant="outline">Show Infrastructure Diagram</Button>
       </DialogTrigger>
       <DialogContent className="w-[85%] !max-w-none">
-        <DialogHeader>
+        <DialogHeader className="flex justify-between items-center">
           <DialogTitle>Infrastructure Diagram</DialogTitle>
+          <Button size="sm" variant="ghost" onClick={toggleDirection}>
+            {direction === "TB" ? "Horizontal" : "Vertical"}
+          </Button>
         </DialogHeader>
         <div className="h-[600px] w-full">
           {layout.nodes.length > 0 ? (
