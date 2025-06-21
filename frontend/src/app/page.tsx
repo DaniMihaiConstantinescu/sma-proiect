@@ -5,8 +5,8 @@ import { useState } from "react";
 import StatCard from "@/components/stat-card";
 import StatsTable from "@/components/stats-table";
 import useWebSocketHook from "./useWebSocket";
-import InfrastructureDiagram from "@/components/infrastructure-diagram";
 import { LogsDialog } from "@/components/logs-dialog";
+import InfrastructureDiagramDialog from "@/components/infrastructure-diagram-v2";
 
 export default function Home() {
   const { reverseProxies, loadBalancers, nodes, logs } = useWebSocketHook();
@@ -67,11 +67,12 @@ export default function Home() {
       </div>
 
       <div className="flex gap-1 mb-2">
-        <InfrastructureDiagram
+        <InfrastructureDiagramDialog
           reverseProxies={reverseProxies}
           loadBalancers={loadBalancers}
           nodes={nodes}
         />
+
         <LogsDialog logs={logs} />
       </div>
 
