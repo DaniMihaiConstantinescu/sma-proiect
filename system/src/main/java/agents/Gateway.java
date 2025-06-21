@@ -87,7 +87,7 @@ public class Gateway extends Agent {
                     send(cfp);
 
                     AID bestProxy = null;
-                    int bestCap = 101;
+                    int bestCap = -1;
                     int replies = 0;
 
                     while (replies < proxies.length) {
@@ -101,7 +101,7 @@ public class Gateway extends Agent {
                         if (reply != null && reply.getPerformative()==ACLMessage.PROPOSE) {
                             int cap = Integer.parseInt(reply.getContent());
                             System.out.printf("[%s] Proxy %s proposed cap=%d%n", getLocalName(), reply.getSender().getLocalName(), cap);
-                            if (cap < bestCap) {
+                            if (cap > bestCap) {
                                 bestCap = cap;
                                 bestProxy = reply.getSender();
                             }
